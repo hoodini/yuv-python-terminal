@@ -568,8 +568,8 @@ elements.codeEditor.addEventListener('scroll', () => {
 
 // Keyboard shortcuts
 elements.codeEditor.addEventListener('keydown', (e) => {
-    // Ctrl+Enter to run
-    if (e.ctrlKey && e.key === 'Enter') {
+    // Ctrl+Enter or Shift+Enter to run
+    if ((e.ctrlKey || e.shiftKey) && e.key === 'Enter') {
         e.preventDefault();
         runPythonCode();
     }

@@ -43,7 +43,7 @@ YUV.PYTHON Terminal is a **futuristic, cyberpunk-themed web application** that l
 - 🖱️ **Smooth Animations** - Polished hover effects and transitions
 
 ### ⌨️ Keyboard Shortcuts
-- `Ctrl + Enter` - Execute code
+- `Ctrl + Enter` or `Shift + Enter` - Execute code
 - `Tab` - Insert 4 spaces (proper indentation)
 - `Ctrl + /` - Comment/uncomment lines
 
