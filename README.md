@@ -2,6 +2,8 @@
 
 ![YUV.PY Banner](screenshots/banner.png)
 
+> **✨ [Live Demo](https://hoodini.github.io/yuv-python-terminal/)** - Try it in your browser!
+
 Welcome to **YUV.PY**! This is a futuristic, web-based Python Playground that lets you write and run Python code directly in your browser. No complex installations, no heavy backend—just you and the code, powered by WebAssembly.
 
 ## 🌟 What is this?
