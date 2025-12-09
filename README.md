@@ -28,6 +28,7 @@ YUV.PYTHON Terminal is a **futuristic, cyberpunk-themed web application** that l
 
 ### 💻 Core Functionality
 - ✅ **Full Python 3.11+ Support** - Complete Python runtime in your browser
+- ✅ **NumPy & Scientific Computing** - Run NumPy, matrix operations, and ML algorithms
 - ✅ **Standard Library Access** - Use built-in modules like `math`, `sys`, `json`, etc.
 - ✅ **Real-time Execution** - See results instantly
 - ✅ **No Backend Required** - Everything runs client-side
@@ -40,7 +41,7 @@ YUV.PYTHON Terminal is a **futuristic, cyberpunk-themed web application** that l
 - 📺 **Scanline Effect** - Retro CRT monitor aesthetic
 - 🎯 **Line Numbers** - Professional code editor with vertical line numbers
 - 🎨 **Syntax Highlighting** - Neon-colored Python syntax highlighting
-- 📝 **8 Code Templates** - Pre-loaded examples (Fibonacci, Sorting, OOP, etc.)
+- 📝 **10 Code Templates** - Pre-loaded examples (Fibonacci, Sorting, OOP, NumPy, Neural Networks, etc.)
 - 📱 **Mobile Responsive** - Works perfectly on all devices
 - 🖱️ **Smooth Animations** - Polished hover effects and transitions
 
@@ -102,8 +103,9 @@ Deploy to **GitHub Pages**, **Netlify**, or **Vercel** for free:
 
 ### 📝 Built-in Code Templates:
 
-YUV.PYTHON comes with 8 ready-to-run Python examples:
+YUV.PYTHON comes with **10 ready-to-run Python examples**, including machine learning!
 
+**Core Python:**
 - 👋 **Hello World** - Get started with basics
 - 🔢 **Fibonacci** - Sequence generation with generators
 - 📊 **Sorting** - Bubble sort, quick sort, and built-in sorting
@@ -113,7 +115,11 @@ YUV.PYTHON comes with 8 ready-to-run Python examples:
 - 🏗️ **Classes & OOP** - Object-oriented programming
 - ⚡ **Generators** - Memory-efficient iteration
 
-Click any template to instantly load and run professional Python code!
+**Scientific Computing & AI:**
+- 🔢 **NumPy** - Arrays, matrices, linear algebra, statistics
+- 🧠 **Neural Network** - Build and train a neural net from scratch (XOR problem)
+
+Click any template to instantly load and run professional Python code - **all running in your browser with WebAssembly!**
 
 ### Example Code to Try:
 

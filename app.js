@@ -1,81 +1,3 @@
-// ==================== Particle Background ====================
-function initParticles() {
-    const canvas = document.getElementById('particles');
-    const ctx = canvas.getContext('2d');
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const particles = [];
-    const particleCount = 80;
-
-    class Particle {
-        constructor() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.vx = (Math.random() - 0.5) * 0.5;
-            this.vy = (Math.random() - 0.5) * 0.5;
-            this.radius = Math.random() * 2 + 1;
-            this.opacity = Math.random() * 0.5 + 0.2;
-        }
-
-        update() {
-            this.x += this.vx;
-            this.y += this.vy;
-
-            if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-            if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
-        }
-
-        draw() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(0, 255, 249, ${this.opacity})`;
-            ctx.fill();
-        }
-    }
-
-    for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle());
-    }
-
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        particles.forEach(particle => {
-            particle.update();
-            particle.draw();
-        });
-
-        // Draw connections
-        particles.forEach((p1, i) => {
-            particles.slice(i + 1).forEach(p2 => {
-                const dx = p1.x - p2.x;
-                const dy = p1.y - p2.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < 150) {
-                    ctx.beginPath();
-                    ctx.moveTo(p1.x, p1.y);
-                    ctx.lineTo(p2.x, p2.y);
-                    ctx.strokeStyle = `rgba(0, 255, 249, ${0.15 * (1 - distance / 150)})`;
-                    ctx.lineWidth = 0.5;
-                    ctx.stroke();
-                }
-            });
-        });
-
-        requestAnimationFrame(animate);
-    }
-
-    animate();
-
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
-}
-
 // ==================== Line Numbers ====================
 function updateLineNumbers() {
     const codeEditor = document.getElementById('codeEditor');
@@ -365,6 +287,15 @@ function loadTemplate(templateName) {
         elements.codeEditor.value = template;
         updateLineNumbers();
         elements.codeEditor.scrollTop = 0;
+        
+        // Update active state
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            if (btn.getAttribute('data-template') === templateName) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
     }
 }
 
@@ -377,20 +308,26 @@ const elements = {
     clearBtn: document.getElementById('clearBtn'),
     codeEditor: document.getElementById('codeEditor'),
     output: document.getElementById('output'),
-    status: document.getElementById('status'),
     connectionStatus: document.getElementById('connection-status'),
     pythonVersion: document.getElementById('python-version')
 };
 
-// Update status indicator with data attribute for CSS styling
-function updateStatus(message, status) {
-    elements.status.textContent = message;
-    elements.status.setAttribute('data-status', status);
-}
-
 // Update connection status
 function updateConnectionStatus(message) {
     elements.connectionStatus.textContent = message;
+    
+    // Update dot color based on status
+    const dot = document.getElementById('connection-dot');
+    if (message === 'SYSTEM READY') {
+        dot.style.background = 'var(--accent-success)';
+        dot.style.boxShadow = '0 0 10px var(--accent-success)';
+    } else if (message === 'INITIALIZING') {
+        dot.style.background = 'var(--accent-warning)';
+        dot.style.boxShadow = '0 0 10px var(--accent-warning)';
+    } else {
+        dot.style.background = 'var(--accent-error)';
+        dot.style.boxShadow = '0 0 10px var(--accent-error)';
+    }
 }
 
 // Initialize Pyodide
@@ -398,9 +335,9 @@ async function initPyodide() {
     if (isInitialized) return;
 
     try {
-        updateStatus('LOADING', 'loading');
-        updateConnectionStatus('LOADING RUNTIME');
+        updateConnectionStatus('INITIALIZING');
         elements.runBtn.disabled = true;
+        elements.runBtn.style.opacity = '0.5';
 
         clearOutput();
         appendOutput('$ ', 'terminal-prompt');
@@ -439,9 +376,9 @@ sys.stderr = OutputCatcher(capture_output)
         elements.pythonVersion.textContent = `Python ${version}`;
 
         isInitialized = true;
-        updateStatus('READY', 'ready');
-        updateConnectionStatus('ONLINE');
+        updateConnectionStatus('SYSTEM READY');
         elements.runBtn.disabled = false;
+        elements.runBtn.style.opacity = '1';
 
         appendOutput('$ ', 'terminal-prompt');
         appendOutput('Runtime initialized successfully\n', 'success-text');
@@ -449,8 +386,7 @@ sys.stderr = OutputCatcher(capture_output)
         appendOutput('Ready to execute Python code\n\n', 'success-text');
 
     } catch (error) {
-        updateStatus('ERROR', 'error');
-        updateConnectionStatus('OFFLINE');
+        updateConnectionStatus('SYSTEM ERROR');
         appendOutput('$ ', 'terminal-prompt');
         appendOutput(`Failed to initialize: ${error.message}\n`, 'error-text');
         console.error('Pyodide initialization error:', error);
@@ -472,7 +408,8 @@ function appendOutput(text, className = '') {
     }
 
     // Auto-scroll to bottom with smooth behavior
-    outputElement.scrollTop = outputElement.scrollHeight;
+    const terminalContent = document.querySelector('.terminal-content');
+    terminalContent.scrollTop = terminalContent.scrollHeight;
 }
 
 // Clear output
@@ -497,14 +434,8 @@ async function runPythonCode() {
     }
 
     try {
-        updateStatus('RUNNING', 'running');
         elements.runBtn.disabled = true;
-
-        // Add button animation
-        elements.runBtn.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-            elements.runBtn.style.transform = '';
-        }, 100);
+        elements.runBtn.innerHTML = '<span class="icon">⏳</span> RUNNING...';
 
         clearOutput();
         appendOutput('$ ', 'terminal-prompt');
@@ -532,10 +463,7 @@ async function runPythonCode() {
         appendOutput('\n$ ', 'terminal-prompt');
         appendOutput('Done\n', 'success-text');
 
-        updateStatus('READY', 'ready');
-
     } catch (error) {
-        updateStatus('ERROR', 'error');
         appendOutput('\n$ ', 'terminal-prompt');
         appendOutput('Traceback:\n', 'error-text');
         appendOutput(error.message + '\n', 'error-text');
@@ -543,21 +471,20 @@ async function runPythonCode() {
 
     } finally {
         elements.runBtn.disabled = false;
+        elements.runBtn.innerHTML = '<span class="icon">▶</span> RUN';
     }
 }
 
 // ==================== Event Listeners ====================
 
 // Template buttons
-document.querySelectorAll('.template-btn').forEach(btn => {
+document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const template = btn.getAttribute('data-template');
         loadTemplate(template);
         clearOutput();
         appendOutput('$ ', 'terminal-prompt');
-        appendOutput(`Loaded template: ${btn.querySelector('.template-name').textContent}\n`, 'success-text');
-        appendOutput('$ ', 'terminal-prompt');
-        appendOutput('Click EXECUTE to run the code\n', 'terminal-text');
+        appendOutput(`Loaded template: ${btn.textContent.trim()}\n`, 'success-text');
     });
 });
 
@@ -627,36 +554,12 @@ elements.codeEditor.addEventListener('keydown', (e) => {
     }
 });
 
-// ==================== Mobile Toggle ====================
-const mobileToggle = document.getElementById('mobileToggle');
-const editorPanel = document.getElementById('editorPanel');
-const terminalPanel = document.getElementById('terminalPanel');
-let showingTerminal = false;
-
-if (mobileToggle) {
-    mobileToggle.addEventListener('click', () => {
-        showingTerminal = !showingTerminal;
-
-        if (showingTerminal) {
-            editorPanel.classList.add('minimized');
-            terminalPanel.classList.add('active');
-        } else {
-            editorPanel.classList.remove('minimized');
-            terminalPanel.classList.remove('active');
-        }
-    });
-}
-
 // ==================== Initialize on Load ====================
 window.addEventListener('DOMContentLoaded', () => {
-    // Initialize particles
-    initParticles();
-
     // Initialize line numbers
     updateLineNumbers();
 
     // Set initial status
-    updateStatus('READY', 'ready');
     updateConnectionStatus('INITIALIZING');
 
     // Load default template
@@ -665,39 +568,9 @@ window.addEventListener('DOMContentLoaded', () => {
     // Set initial output
     clearOutput();
     appendOutput('$ ', 'terminal-prompt');
-    appendOutput('YUV.PYTHON Terminal v1.0\n', 'terminal-text');
+    appendOutput('YUV.PYTHON Terminal v2.0\n', 'terminal-text');
     appendOutput('$ ', 'terminal-prompt');
-    appendOutput('Created by Yuval Avidani - GitHub Star\n', 'success-text');
-    appendOutput('$ ', 'terminal-prompt');
-    appendOutput('Click EXECUTE to initialize Python runtime\n', 'terminal-text');
-    appendOutput('$ ', 'terminal-prompt');
-    appendOutput('Press Ctrl+Enter to run code\n', 'terminal-text');
-    appendOutput('$ ', 'terminal-prompt');
-    appendOutput('Try the code templates above!\n\n', 'terminal-text');
-
-    // Update glitch effect data attribute
-    const glitchElement = document.querySelector('.glitch');
-    if (glitchElement) {
-        glitchElement.setAttribute('data-text', 'YUV.PYTHON');
-    }
-
-    // Add typing effect to subtitle
-    const typingText = document.querySelector('.typing-text');
-    if (typingText) {
-        const text = typingText.textContent;
-        typingText.textContent = '';
-        let i = 0;
-
-        function typeWriter() {
-            if (i < text.length) {
-                typingText.textContent += text.charAt(i);
-                i++;
-                setTimeout(typeWriter, 100);
-            }
-        }
-
-        setTimeout(typeWriter, 500);
-    }
+    appendOutput('Initializing system...\n', 'terminal-text');
 });
 
 // Handle window resize
