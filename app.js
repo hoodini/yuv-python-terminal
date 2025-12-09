@@ -12,8 +12,8 @@ function updateLineNumbers() {
 }
 
 // ==================== Code Templates ====================
-const codeTemplates = {
-    shim: `
+
+const MICRO_TORCH_LIB = `
 # MICRO-TORCH: A lightweight PyTorch shim for the browser (NumPy-based)
 import numpy as np
 import math
@@ -154,19 +154,23 @@ sys.modules['torch.nn'] = m_nn
 sys.modules['torch.optim'] = m_optim
 
 print("⚡ Micro-PyTorch (NumPy Shim) loaded for Browser Demo")
-`,
+`;
 
-    // Helper to inject shim if needed
-    function getAugmentedCode(code) {
-        // The shim is now available as a template itself, so no automatic injection here.
-        // Users should explicitly load the 'shim' template if they need it.
-        return code;
+// Helper to inject shim if needed
+function getAugmentedCode(code) {
+    if (code.includes('import torch')) {
+        return MICRO_TORCH_LIB + '\n\n' + code;
+    }
+    return code;
 }
 
-hello: `# Hello World - YUV.PY
+const codeTemplates = {
+    shim: MICRO_TORCH_LIB,
+
+    hello: `# Hello World - YUV.PY
 print("🐍 Welcome to YUV.PY Terminal!")
 print("Created by Yuval Avidani - GitHub Star")
-print("="*50)
+print("=" * 50)
 
 # Greetings
 name = "Developer"
@@ -190,13 +194,13 @@ print(f"\\n🚀 You're running Python {__import__('sys').version.split()[0]} in 
 
     fibonacci: `# Fibonacci Sequence Generator
 def fibonacci(n):
-    """Generate Fibonacci sequence up to n terms"""
-    a, b = 0, 1
-    result = []
-    for _ in range(n):
-        result.append(a)
-        a, b = b, a + b
-    return result
+"""Generate Fibonacci sequence up to n terms"""
+a, b = 0, 1
+result = []
+for _ in range(n):
+    result.append(a)
+a, b = b, a + b
+return result
 
 # Generate first 15 Fibonacci numbers
 fib_numbers = fibonacci(15)
@@ -205,16 +209,16 @@ print(fib_numbers)
 
 # Using generator for memory efficiency
 def fib_generator(n):
-    a, b = 0, 1
-    for _ in range(n):
-        yield a
-        a, b = b, a + b
+a, b = 0, 1
+for _ in range(n):
+    yield a
+a, b = b, a + b
 
 print("\\nUsing Generator:")
 for num in fib_generator(10):
-    print(num, end=' ')`,
+    print(num, end = ' ')`,
 
-        sorting: `# Sorting Algorithms Demo
+    sorting: `# Sorting Algorithms Demo
 import random
 
 # Generate random list
@@ -223,28 +227,28 @@ print("Original:", numbers)
 
 # Bubble Sort
 def bubble_sort(arr):
-    n = len(arr)
-    for i in range(n):
-        for j in range(0, n-i-1):
-            if arr[j] > arr[j+1]:
-                arr[j], arr[j+1] = arr[j+1], arr[j]
-    return arr
+n = len(arr)
+for i in range(n):
+    for j in range(0, n - i - 1):
+        if arr[j] > arr[j + 1]:
+            arr[j], arr[j + 1] = arr[j + 1], arr[j]
+return arr
 
 # Quick Sort
 def quick_sort(arr):
-    if len(arr) <= 1:
-        return arr
-    pivot = arr[len(arr) // 2]
+if len(arr) <= 1:
+    return arr
+pivot = arr[len(arr) // 2]
     left = [x for x in arr if x < pivot]
-    middle = [x for x in arr if x == pivot]
-    right = [x for x in arr if x > pivot]
-    return quick_sort(left) + middle + quick_sort(right)
+middle = [x for x in arr if x == pivot]
+right = [x for x in arr if x > pivot]
+return quick_sort(left) + middle + quick_sort(right)
 
 print("\\nBubble Sort:", bubble_sort(numbers.copy()))
 print("Quick Sort:", quick_sort(numbers.copy()))
 print("Built-in Sort:", sorted(numbers))`,
 
-            datastructures: `# Data Structures in Python
+    datastructures: `# Data Structures in Python
 from collections import deque, Counter
 
 # Stack using list
@@ -270,8 +274,8 @@ person = {
 print("\\nPerson:", person)
 
 # Set operations
-set1 = {1, 2, 3, 4}
-set2 = {3, 4, 5, 6}
+set1 = { 1, 2, 3, 4}
+set2 = { 3, 4, 5, 6}
 print("\\nUnion:", set1 | set2)
 print("Intersection:", set1 & set2)
 
@@ -279,37 +283,37 @@ print("Intersection:", set1 & set2)
 words = ["python", "ai", "python", "ai", "code"]
 print("\\nWord Count:", Counter(words))`,
 
-                decorators: `# Python Decorators
+    decorators: `# Python Decorators
 import time
 
 def timer_decorator(func):
-    """Decorator to measure function execution time"""
-    def wrapper(*args, **kwargs):
-        start = time.time()
-        result = func(*args, **kwargs)
-        end = time.time()
-        print(f"⏱️ {func.__name__} took {end-start:.4f} seconds")
-        return result
-    return wrapper
+"""Decorator to measure function execution time"""
+    def wrapper(* args, ** kwargs):
+start = time.time()
+result = func(* args, ** kwargs)
+end = time.time()
+print(f"⏱️ {func.__name__} took {end-start:.4f} seconds")
+return result
+return wrapper
 
 def cache_decorator(func):
-    """Simple memoization decorator"""
-    cache = {}
-    def wrapper(*args):
-        if args in cache:
-            print(f"📦 Cache hit for {args}")
-            return cache[args]
-        result = func(*args)
-        cache[args] = result
-        return result
-    return wrapper
+"""Simple memoization decorator"""
+cache = {}
+    def wrapper(* args):
+if args in cache:
+    print(f"📦 Cache hit for {args}")
+return cache[args]
+result = func(* args)
+cache[args] = result
+return result
+return wrapper
 
 @timer_decorator
 @cache_decorator
 def fibonacci(n):
-    if n < 2:
-        return n
-    return fibonacci(n-1) + fibonacci(n-2)
+if n < 2:
+    return n
+return fibonacci(n - 1) + fibonacci(n - 2)
 
 # Test it
 print("Computing fibonacci(10)...")
@@ -317,10 +321,10 @@ print(f"Result: {fibonacci(10)}")
 print("\\nComputing again (cached)...")
 print(f"Result: {fibonacci(10)}")`,
 
-                    comprehensions: `# List, Dict, and Set Comprehensions
+    comprehensions: `# List, Dict, and Set Comprehensions
 
 # List Comprehension
-squares = [x**2 for x in range(10)]
+squares = [x ** 2 for x in range(10)]
 print("Squares:", squares)
 
 # With condition
@@ -328,50 +332,50 @@ evens = [x for x in range(20) if x % 2 == 0]
 print("\\nEven numbers:", evens)
 
 # Nested comprehension
-matrix = [[i*j for j in range(5)] for i in range(5)]
+matrix = [[i * j for j in range(5)]for i in range(5)]
 print("\\nMultiplication Table:")
 for row in matrix:
     print(row)
 
 # Dictionary Comprehension
-word_lengths = {word: len(word) for word in ["python", "code", "ai"]}
+word_lengths = { word: len(word) for word in ["python", "code", "ai"] }
 print("\\nWord lengths:", word_lengths)
 
 # Set Comprehension
-unique_lengths = {len(word) for word in ["hello", "world", "hi", "code"]}
+unique_lengths = { len(word) for word in ["hello", "world", "hi", "code"] }
 print("Unique lengths:", unique_lengths)
 
-# Generator Expression (memory efficient)
-gen = (x**2 for x in range(1000000))
-print("\\nFirst 5 from generator:", [next(gen) for _ in range(5)])`,
+# Generator Expression(memory efficient)
+gen = (x ** 2 for x in range(1000000))
+    print("\\nFirst 5 from generator:", [next(gen) for _ in range(5)])`,
 
-                        classes: `# Object-Oriented Programming in Python
+    classes: `# Object - Oriented Programming in Python
 
 class Person:
-    """A class representing a person"""
+"""A class representing a person"""
 
     def __init__(self, name, age):
-        self.name = name
-        self.age = age
+self.name = name
+self.age = age
 
     def introduce(self):
-        return f"Hi, I'm {self.name}, {self.age} years old"
+return f"Hi, I'm {self.name}, {self.age} years old"
 
     def __repr__(self):
-        return f"Person(name='{self.name}', age={self.age})"
+return f"Person(name='{self.name}', age={self.age})"
 
 class Developer(Person):
-    """Developer class inheriting from Person"""
+"""Developer class inheriting from Person"""
 
     def __init__(self, name, age, language):
-        super().__init__(name, age)
-        self.language = language
+super().__init__(name, age)
+self.language = language
 
     def introduce(self):
-        return f"{super().introduce()} and I code in {self.language}"
+return f"{super().introduce()} and I code in {self.language}"
 
     def code(self):
-        return f"💻 Coding in {self.language}..."
+return f"💻 Coding in {self.language}..."
 
 # Create instances
 person = Person("Alice", 25)
@@ -382,66 +386,66 @@ print(dev.introduce())
 print(dev.code())
 print(f"\\nDeveloper object: {dev}")`,
 
-                            generators: `# Python Generators - Memory Efficient Iteration
+    generators: `# Python Generators - Memory Efficient Iteration
 
 def simple_generator():
-    """A simple generator function"""
-    yield 1
-    yield 2
-    yield 3
+"""A simple generator function"""
+yield 1
+yield 2
+yield 3
 
 print("Simple generator:")
 for value in simple_generator():
     print(value)
 
 def infinite_sequence():
-    """Generate infinite sequence"""
-    num = 0
-    while True:
-        yield num
-        num += 1
+"""Generate infinite sequence"""
+num = 0
+while True:
+    yield num
+num += 1
 
 print("\\nFirst 10 from infinite sequence:")
 gen = infinite_sequence()
 for _ in range(10):
-    print(next(gen), end=' ')
+    print(next(gen), end = ' ')
 
 def fibonacci_gen():
-    """Fibonacci generator"""
-    a, b = 0, 1
-    while True:
-        yield a
-        a, b = b, a + b
+"""Fibonacci generator"""
+a, b = 0, 1
+while True:
+    yield a
+a, b = b, a + b
 
 print("\\n\\nFibonacci with generator:")
 fib = fibonacci_gen()
 print([next(fib) for _ in range(10)])
 
 # Generator Expression
-squares = (x**2 for x in range(10))
-print("\\nSquares generator:", list(squares))
+squares = (x ** 2 for x in range(10))
+    print("\\nSquares generator:", list(squares))
 
-# File reading generator (efficient for large files)
+# File reading generator(efficient for large files)
 def read_large_file(filename):
-    """Memory-efficient file reader"""
-    for line in open(filename):
-        yield line.strip()
+"""Memory-efficient file reader"""
+for line in open(filename):
+    yield line.strip()
 
 print("\\n✨ Generators are memory efficient!")
 print("They generate values on-the-fly instead of storing all in memory")`,
 
-                                neuralnet: `# Neural Network Training Simulation
+    neuralnet: `# Neural Network Training Simulation
 import random
 import asyncio
 
 class Neuron:
     def __init__(self):
-        self.weights = [random.uniform(-1, 1) for _ in range(3)]
-        self.bias = random.uniform(-1, 1)
+self.weights = [random.uniform(-1, 1) for _ in range(3)]
+self.bias = random.uniform(-1, 1)
 
     def activate(self, inputs):
         # Only for structure, value unused in this demo sim
-        return 0
+return 0
 
 print("🧠 Initializing Neural Network...")
 print("Architecture: [Input(3) -> Hidden(4) -> Hidden(4) -> Output(2)]")
@@ -449,27 +453,27 @@ print("Architecture: [Input(3) -> Hidden(4) -> Hidden(4) -> Output(2)]")
 # We use an async main function to allow UI updates during sleep
 async function main():
     print("\\n🔄 Starting Training Loop...")
-    epochs = 10
-    
-    for i in range(epochs):
+epochs = 10
+
+for i in range(epochs):
         # Simulate calculation time
-        await asyncio.sleep(0.5)
+await asyncio.sleep(0.5)
         
         # Calculate dummy metrics
-        loss = 0.5 * (0.8 ** i) + random.uniform(0.01, 0.05)
-        acc = 0.5 + (0.45 * (1 - (0.8 ** i))) + random.uniform(-0.02, 0.02)
+loss = 0.5 * (0.8 ** i) + random.uniform(0.01, 0.05)
+acc = 0.5 + (0.45 * (1 - (0.8 ** i))) + random.uniform(-0.02, 0.02)
         
         # Visualization of a progress bar
-        progress = "█" * (i + 1) + "░" * (epochs - i - 1)
-        
-        print(f"Epoch {i+1}/{epochs} [{progress}]")
-        print(f"   Loss: {loss:.4f} | Accuracy: {acc*100:.2f}%")
+progress = "█" * (i + 1) + "░" * (epochs - i - 1)
 
-    print("\\n✨ Training Complete!")
-    print("Model ready for inference.")
+print(f"Epoch {i+1}/{epochs} [{progress}]")
+print(f"   Loss: {loss:.4f} | Accuracy: {acc*100:.2f}%")
 
-# Check if running in an event loop (Pyodide usually is)
-# We can just await it at top level in newer Pyodide/Runners, 
+print("\\n✨ Training Complete!")
+print("Model ready for inference.")
+
+# Check if running in an event loop(Pyodide usually is)
+# We can just await it at top level in newer Pyodide / Runners, 
 # but safest is simply calling it if we are already in async context or just:
 await main()`,
 };
@@ -634,7 +638,7 @@ const neuralViz = {
                 p.layer === builderState.hiddenLayers.length + 1 ? '#bc13fe' : // Output (Purple)
                     '#ffffff'; // Hidden (White)
 
-            this.ctx.fillStyle = p.active ? color : `rgba(255,255,255,0.2)`;
+            this.ctx.fillStyle = p.active ? color : `rgba(255, 255, 255, 0.2)`;
             this.ctx.fill();
 
             if (p.active) {
@@ -656,7 +660,7 @@ function generateCode() {
     let code = '';
 
     if (framework === 'pytorch') {
-        code = `# PyTorch Neural Network (Browser Compatible)
+        code = `# PyTorch Neural Network(Browser Compatible)
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -665,12 +669,12 @@ import asyncio
 # Define Network
 class NeuralNetwork(nn.Module):
     def __init__(self):
-        super(NeuralNetwork, self).__init__()
-        self.layers = nn.Module() # Container
+super(NeuralNetwork, self).__init__()
+self.layers = nn.Module() # Container
         # Architecture: ${inputSize} -> ${hiddenLayers.map(l => l.size).join(' -> ')} -> ${outputSize}
-        self.fc1 = nn.Linear(${inputSize}, ${hiddenLayers[0]?.size || 4})
+self.fc1 = nn.Linear(${inputSize}, ${hiddenLayers[0]?.size || 4})
         ${hiddenLayers.map((l, i) => i > 0 ? `self.fc${i + 1} = nn.Linear(${hiddenLayers[i - 1].size}, ${l.size})` : '').join('\n        ')}
-        self.out = nn.Linear(${hiddenLayers[hiddenLayers.length - 1]?.size || 4}, ${outputSize})
+self.out = nn.Linear(${hiddenLayers[hiddenLayers.length - 1]?.size || 4}, ${outputSize})
 
     def forward(self, x):
 
@@ -684,75 +688,75 @@ targets = torch.randint(0, 2, (10, ${outputSize})).float()
 
 # Training Loop
 criterion = nn.BCELoss()
-optimizer = optim.Adam(model.parameters(), lr=0.01)
+optimizer = optim.Adam(model.parameters(), lr = 0.01)
 
 print("\\nTraining for 5 epochs:")
 for epoch in range(5):
     optimizer.zero_grad()
-    outputs = model(inputs)
-    loss = criterion(outputs, targets)
-    loss.backward()
-    optimizer.step()
-    print(f"Epoch {epoch+1}, Loss: {loss.item():.4f}")
+outputs = model(inputs)
+loss = criterion(outputs, targets)
+loss.backward()
+optimizer.step()
+print(f"Epoch {epoch+1}, Loss: {loss.item():.4f}")
 `;
     } else if (framework === 'tensorflow') {
-        code = `# TensorFlow/Keras Neural Network
+        code = `# TensorFlow / Keras Neural Network
 import tensorflow as tf
 from tensorflow.keras import layers, models
 import numpy as np
 
 # Build Model
 model = models.Sequential()
-model.add(layers.Input(shape=(${inputSize},)))
+model.add(layers.Input(shape = (${inputSize},)))
 `;
         hiddenLayers.forEach(layer => {
-            code += `model.add(layers.Dense(${layer.size}, activation='${layer.activation}'))\n`;
+            code += `model.add(layers.Dense(${layer.size}, activation = '${layer.activation}')) \n`;
         });
-        code += `model.add(layers.Dense(${outputSize}, activation='sigmoid'))
+        code += `model.add(layers.Dense(${outputSize}, activation = 'sigmoid'))
 
 model.summary()
 
 # Dummy Data
 X = np.random.random((100, ${inputSize}))
-y = np.random.randint(2, size=(100, ${outputSize}))
+y = np.random.randint(2, size = (100, ${outputSize}))
 
 # Compile & Train
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+model.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
 print("\\nStarting Training...")
-history = model.fit(X, y, epochs=5, batch_size=10, verbose=1)
-`;
+history = model.fit(X, y, epochs = 5, batch_size = 10, verbose = 1)
+    `;
     } else {
         // Pure Python (Visual Demo support)
-        code = `# Pure Python Neural Network (No Libraries)
+        code = `# Pure Python Neural Network(No Libraries)
 import random
 import math
 import asyncio
 
 def sigmoid(x):
-    return 1 / (1 + math.exp(-x))
+return 1 / (1 + math.exp(-x))
 
 class NeuralNetwork:
     def __init__(self):
         # Architecture: ${inputSize} -> ${hiddenLayers.map(l => l.size).join(' -> ')} -> ${outputSize}
-        self.weights = [] 
-        # (Simplified logic for demo)
+self.weights = [] 
+        #(Simplified logic for demo)
             
     async def train_simulation(self):
-        print("🧠 Initializing custom network...")
-        print("Structure: ${inputSize} inputs, ${outputSize} outputs")
-        print("\\n🚀 Starting simulated training...")
-        
-        for i in range(5):
-            await asyncio.sleep(0.6)
-            loss = 1.0 / (i + 1) + random.random() * 0.1
-            print(f"Step {i+1}: Loss decreasing... Current: {loss:.4f}")
-            
-        print("\\n✅ Network optimized.")
+print("🧠 Initializing custom network...")
+print("Structure: ${inputSize} inputs, ${outputSize} outputs")
+print("\\n🚀 Starting simulated training...")
+
+for i in range(5):
+    await asyncio.sleep(0.6)
+loss = 1.0 / (i + 1) + random.random() * 0.1
+print(f"Step {i+1}: Loss decreasing... Current: {loss:.4f}")
+
+print("\\n✅ Network optimized.")
 
 # Run Simulation
 nn = NeuralNetwork()
 await nn.train_simulation()
-`;
+    `;
     }
 
     return code;
@@ -773,17 +777,17 @@ function renderBuilderLayers() {
         const item = document.createElement('div');
         item.className = 'layer-item';
         item.innerHTML = `
-            <span>Hidden ${index + 1}</span>
-            <div style="display:flex; gap:5px;">
-                <input type="number" value="${layer.size}" min="1" max="20" onchange="updateLayer(${index}, 'size', this.value)">
+    < span > Hidden ${index + 1}</span >
+        <div style="display:flex; gap:5px;">
+            <input type="number" value="${layer.size}" min="1" max="20" onchange="updateLayer(${index}, 'size', this.value)">
                 <select onchange="updateLayer(${index}, 'activation', this.value)" style="background:rgba(255,255,255,0.1); color:white; border:none; border-radius:4px;">
                     <option value="relu" ${layer.activation === 'relu' ? 'selected' : ''}>ReLU</option>
                     <option value="sigmoid" ${layer.activation === 'sigmoid' ? 'selected' : ''}>Sigmoid</option>
                     <option value="tanh" ${layer.activation === 'tanh' ? 'selected' : ''}>Tanh</option>
                 </select>
                 <button onclick="removeLayer(${index})" style="background:none; border:none; color:#ff3860; cursor:pointer;">✕</button>
-            </div>
-        `;
+        </div>
+`;
         list.appendChild(item);
     });
 }
@@ -840,131 +844,131 @@ function loadTemplate(templateName) {
         });
 
         const MICRO_TORCH_LIB = `
-# MICRO-TORCH: A lightweight PyTorch shim for the browser (NumPy-based)
+# MICRO - TORCH: A lightweight PyTorch shim for the browser(NumPy - based)
 import numpy as np
 import math
 
 class Tensor:
-    def __init__(self, data, requires_grad=False):
-        self.data = np.array(data, dtype=np.float32)
-        self.grad = None
-        self.requires_grad = requires_grad
+    def __init__(self, data, requires_grad = False):
+self.data = np.array(data, dtype = np.float32)
+self.grad = None
+self.requires_grad = requires_grad
 
     def __repr__(self):
-        return f"tensor({self.data})"
+return f"tensor({self.data})"
         
     def backward(self):
         pass # Autograd not fully implemented in shim
 
     def item(self):
-        return self.data.item()
+return self.data.item()
         
     def toList(self):
-        return self.data.tolist()
+return self.data.tolist()
 
-def tensor(data, requires_grad=False):
-    return Tensor(data, requires_grad)
+def tensor(data, requires_grad = False):
+return Tensor(data, requires_grad)
 
 def relu(x):
-    return Tensor(np.maximum(0, x.data))
+return Tensor(np.maximum(0, x.data))
 
 def sigmoid(x):
-    return Tensor(1 / (1 + np.exp(-x.data)))
+return Tensor(1 / (1 + np.exp(-x.data)))
 
 class Module:
     def __init__(self):
-        self._parameters = []
+self._parameters = []
     
     def parameters(self):
-        return self._parameters
+return self._parameters
 
-    def __call__(self, *args, **kwargs):
-        return self.forward(*args, **kwargs)
+    def __call__(self, * args, ** kwargs):
+return self.forward(* args, ** kwargs)
 
 class Linear(Module):
     def __init__(self, in_features, out_features):
-        super().__init__()
+super().__init__()
         # Kaiming initialization approximation
-        limit = math.sqrt(6 / (in_features + out_features))
-        self.weight = Tensor(np.random.uniform(-limit, limit, (out_features, in_features)), requires_grad=True)
-        self.bias = Tensor(np.zeros(out_features), requires_grad=True)
-        self._parameters.extend([self.weight, self.bias])
+limit = math.sqrt(6 / (in_features + out_features))
+self.weight = Tensor(np.random.uniform(-limit, limit, (out_features, in_features)), requires_grad = True)
+self.bias = Tensor(np.zeros(out_features), requires_grad = True)
+self._parameters.extend([self.weight, self.bias])
         
     def forward(self, input):
         # input: (batch, in), weight: (out, in) -> output: (batch, out)
         # Input might be a Tensor or numpy
-        x = input.data if isinstance(input, Tensor) else np.array(input)
+x = input.data if isinstance(input, Tensor) else np.array(input)
         
-        # Simple matrix multiplication: x @ W.T + b
-        res = x @ self.weight.data.T + self.bias.data
-        return Tensor(res)
+        # Simple matrix multiplication: x @W.T + b
+res = x @self.weight.data.T + self.bias.data
+return Tensor(res)
 
 # Mock Optimizer
 class SGD:
-    def __init__(self, params, lr=0.01):
-        self.params = params
-        self.lr = lr
+    def __init__(self, params, lr = 0.01):
+self.params = params
+self.lr = lr
         
     def step(self):
         # Mock update for demo visualization
         for p in self.params:
-            if hasattr(p, 'data'):
+        if hasattr(p, 'data'):
                 # In a real shim we'd need gradients. 
                 # For this VISUAL DEMO, we mimic "learning" by nudging weights towards a pattern
                 # or just letting the loss function in the user code drive the visuals.
                 # Since we don't have real autograd here, we'll implement a 
                 # "Gradient Descent Simulation" where we assume gradients exist or just decay loss.
-                pass
+    pass
                 
     def zero_grad(self):
-        pass
+pass
 
 # Structure the 'torch' module
 class torch_shim:
     def __init__(self):
-        self.Tensor = Tensor
-        self.tensor = tensor
-        self.relu = relu
-        self.sigmoid = sigmoid
-        self.float32 = np.float32
+self.Tensor = Tensor
+self.tensor = tensor
+self.relu = relu
+self.sigmoid = sigmoid
+self.float32 = np.float32
         
     def manual_seed(self, seed):
-        np.random.seed(seed)
+np.random.seed(seed)
         
-    def randn(self, *size):
-        return Tensor(np.random.randn(*size))
+    def randn(self, * size):
+return Tensor(np.random.randn(* size))
 
 # Structure 'torch.nn'
 class nn_shim:
     def __init__(self):
-        self.Module = Module
-        self.Linear = Linear
-        self.ReLU = lambda: (lambda x: relu(x))
-        self.Sigmoid = lambda: (lambda x: sigmoid(x))
-        self.MSELoss = lambda: (lambda pred, target: Tensor(np.mean((pred.data - target.data)**2)))
+self.Module = Module
+self.Linear = Linear
+self.ReLU = lambda: (lambda x: relu(x))
+self.Sigmoid = lambda: (lambda x: sigmoid(x))
+self.MSELoss = lambda: (lambda pred, target: Tensor(np.mean((pred.data - target.data) ** 2)))
 
 # Structure 'torch.optim'
 class optim_shim:
     def __init__(self):
-        self.SGD = SGD
+self.SGD = SGD
 
 # Inject into sys.modules
 import sys
-from types import ModuleType
+    from types import ModuleType
 
 # Create torch module
 m_torch = ModuleType('torch')
 torch_inst = torch_shim()
 for attr in dir(torch_inst):
     if not attr.startswith('__'):
-        setattr(m_torch, attr, getattr(torch_inst, attr))
+setattr(m_torch, attr, getattr(torch_inst, attr))
 
 # Create torch.nn
 m_nn = ModuleType('torch.nn')
 nn_inst = nn_shim()
 for attr in dir(nn_inst):
     if not attr.startswith('__'):
-        setattr(m_nn, attr, getattr(nn_inst, attr))
+setattr(m_nn, attr, getattr(nn_inst, attr))
 m_torch.nn = m_nn
 
 # Create torch.optim
@@ -972,7 +976,7 @@ m_optim = ModuleType('torch.optim')
 optim_inst = optim_shim()
 for attr in dir(optim_inst):
     if not attr.startswith('__'):
-        setattr(m_optim, attr, getattr(optim_inst, attr))
+setattr(m_optim, attr, getattr(optim_inst, attr))
 m_torch.optim = m_optim
 
 sys.modules['torch'] = m_torch
@@ -980,7 +984,7 @@ sys.modules['torch.nn'] = m_nn
 sys.modules['torch.optim'] = m_optim
 
 print("⚡ Micro-PyTorch (NumPy Shim) loaded for Browser Demo")
-`;
+    `;
 
         // Helper to inject shim if needed
         function getAugmentedCode(code) {
@@ -1078,17 +1082,17 @@ import js
 
 class OutputCatcher(io.StringIO):
     def write(self, text):
-        if text:
-            js.py_std_out(text)
-        return len(text)
+if text:
+    js.py_std_out(text)
+return len(text)
 
 sys.stdout = OutputCatcher()
 sys.stderr = OutputCatcher()
-        `);
+    `);
 
         // Get Python version
         const version = await pyodide.runPythonAsync('sys.version.split()[0]');
-        elements.pythonVersion.textContent = `Python ${version}`;
+        elements.pythonVersion.textContent = `Python ${version} `;
 
         isInitialized = true;
         updateConnectionStatus('SYSTEM READY');
@@ -1103,7 +1107,7 @@ sys.stderr = OutputCatcher()
     } catch (error) {
         updateConnectionStatus('SYSTEM ERROR');
         appendOutput('$ ', 'terminal-prompt');
-        appendOutput(`Failed to initialize: ${error.message}\n`, 'error-text');
+        appendOutput(`Failed to initialize: ${error.message} \n`, 'error-text');
         console.error('Pyodide initialization error:', error);
     }
 }
@@ -1192,7 +1196,7 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
         loadTemplate(template);
         clearOutput();
         appendOutput('$ ', 'terminal-prompt');
-        appendOutput(`Loaded template: ${btn.textContent.trim()}\n`, 'success-text');
+        appendOutput(`Loaded template: ${btn.textContent.trim()} \n`, 'success-text');
     });
 });
 
@@ -1315,7 +1319,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 // Just show code
                 clearOutput();
                 appendOutput('$ ', 'terminal-prompt');
-                appendOutput(`Generated ${builderState.framework} code. \n`, 'success-text');
+                appendOutput(`Generated ${builderState.framework} code.\n`, 'success-text');
                 appendOutput('Note: PyTorch/TensorFlow libraries are not yet fully supported in this WASM runtime.\n', 'text-secondary');
                 appendOutput('You can copy this code to your local machine, or switch to "Pure Python" to run a simulation here.\n', 'text-secondary');
                 // Close builder to see code
