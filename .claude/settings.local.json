@@ -5,7 +5,9 @@
       "Skill(frontend-design:frontend-design)",
       "Bash(git init:*)",
       "Bash(git config:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nInitial commit: PyWASM Terminal - Python in Browser\n\n- Futuristic cyberpunk-themed Python interpreter\n- WebAssembly powered by Pyodide\n- Animated particle background with neon effects\n- Glitch animations and scanline effects\n- Line numbers and syntax support\n- Mobile responsive design\n- Keyboard shortcuts (Ctrl+Enter, Tab, Ctrl+/)\n- Creator branding and social links\n\nCreated by Yuval Avidani\nAI Builder & Speaker | Founder of YUV.AI\nGitHub Star | AWS Gen AI Superstar\nEOF\n)\")",
+      "Bash(git commit:*)"
     ]
   }
 }
