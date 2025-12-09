@@ -93,13 +93,28 @@ function updateLineNumbers() {
 const codeTemplates = {
     hello: `# Hello World - YUV.PYTHON
 print("🐍 Welcome to YUV.PYTHON Terminal!")
-print("Created by Yuval Avidani")
+print("Created by Yuval Avidani - GitHub Star")
+print("="*50)
 
-name = input("What's your name? ")
-print(f"Hello, {name}! 👋")
+# Greetings
+name = "Developer"
+print(f"\\nHello, {name}! 👋")
+print("Ready to code some Python in the browser?")
 
 # Try some math
-print(f"\\n2 + 2 = {2 + 2}")`,
+print(f"\\n✨ Math Operations:")
+print(f"2 + 2 = {2 + 2}")
+print(f"10 * 5 = {10 * 5}")
+print(f"2 ** 8 = {2 ** 8}")
+
+# Try some strings
+print(f"\\n🎨 String Operations:")
+message = "Python in WebAssembly!"
+print(f"Message: {message}")
+print(f"Uppercase: {message.upper()}")
+print(f"Length: {len(message)} characters")
+
+print(f"\\n🚀 You're running Python {__import__('sys').version.split()[0]} in your browser!")`,
 
     fibonacci: `# Fibonacci Sequence Generator
 def fibonacci(n):
