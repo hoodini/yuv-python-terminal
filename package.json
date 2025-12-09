@@ -1,0 +1,23 @@
+{
+  "name": "browser-python",
+  "version": "1.0.0",
+  "description": "A web application that runs Python code in the browser using WebAssembly (Pyodide)",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve .",
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "python",
+    "webassembly",
+    "wasm",
+    "pyodide",
+    "browser",
+    "web"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+}

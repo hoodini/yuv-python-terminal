@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Execute Python code directly in your browser using WebAssembly. Created by Yuval Avidani - AI Builder, Speaker & GitHub Star.">
+    <meta name="author" content="Yuval Avidani - YUV.AI">
+    <meta property="og:title" content="PyWASM Terminal - Python in Browser">
+    <meta property="og:description" content="Run Python code in your browser with WebAssembly">
+    <meta property="og:type" content="website">
+    <title>PyWASM Terminal // Execute Python in Browser - by Yuval Avidani</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="bg-grid"></div>
+    <div class="bg-gradient"></div>
+    <canvas id="particles"></canvas>
+
+    <div class="scanline"></div>
+
+    <div class="container">
+        <!-- Header with glitch effect -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="title glitch" data-text="PyWASM">
+                    <span class="title-main">PyWASM</span>
+                    <span class="title-sub">TERMINAL</span>
+                </h1>
+                <p class="subtitle">
+                    <span class="bracket">[</span>
+                    <span class="typing-text">Execute Python via WebAssembly</span>
+                    <span class="bracket">]</span>
+                </p>
+                <div class="status-bar">
+                    <div class="status-item">
+                        <span class="status-dot"></span>
+                        <span id="connection-status">INITIALIZING</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-icon">⚡</span>
+                        <span id="python-version">Python 3.11</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-icon">🌐</span>
+                        <span>WebAssembly</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main workspace -->
+        <div class="workspace">
+            <!-- Code Editor Panel -->
+            <div class="panel editor-panel" id="editorPanel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <span class="panel-icon">▹</span>
+                        <span class="panel-label">CODE_EDITOR</span>
+                        <span class="panel-extension">.py</span>
+                    </div>
+                    <div class="panel-controls">
+                        <button class="control-btn" id="clearBtn" title="Clear editor">
+                            <span class="btn-icon">⟲</span>
+                            <span class="btn-label">CLEAR</span>
+                        </button>
+                        <button class="control-btn primary" id="runBtn" title="Execute code (Ctrl+Enter)">
+                            <span class="btn-icon">▶</span>
+                            <span class="btn-label">EXECUTE</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="line-numbers" id="lineNumbers"></div>
+                    <textarea id="codeEditor" class="code-input" spellcheck="false" placeholder="# Write Python code here...">print("Hello from Python in the browser!")
+
+# Try some Python features
+import sys
+print(f"Python version: {sys.version}")
+
+# Math operations
+result = sum([i**2 for i in range(10)])
+print(f"Sum of squares 0-9: {result}")
+
+# Use built-in libraries
+import math
+print(f"Pi: {math.pi}")
+print(f"Square root of 16: {math.sqrt(16)}")</textarea>
+                </div>
+            </div>
+
+            <!-- Terminal Output Panel -->
+            <div class="panel terminal-panel" id="terminalPanel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <span class="panel-icon">◉</span>
+                        <span class="panel-label">TERMINAL_OUTPUT</span>
+                    </div>
+                    <div class="panel-controls">
+                        <span id="status" class="status-badge">READY</span>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <pre id="output" class="terminal-output"><span class="terminal-prompt">$ </span><span class="terminal-text">Awaiting execution...</span></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Cards -->
+        <div class="info-grid">
+            <div class="info-card" style="animation-delay: 0.1s">
+                <div class="card-header">
+                    <span class="card-icon">⚙️</span>
+                    <h3>FEATURES</h3>
+                </div>
+                <ul class="card-list">
+                    <li><span class="list-marker">›</span> Full Python 3.11+ Runtime</li>
+                    <li><span class="list-marker">›</span> Standard Library Access</li>
+                    <li><span class="list-marker">›</span> NumPy, Pandas, SciPy</li>
+                    <li><span class="list-marker">›</span> Client-Side Execution</li>
+                </ul>
+            </div>
+
+            <div class="info-card" style="animation-delay: 0.2s">
+                <div class="card-header">
+                    <span class="card-icon">⌨️</span>
+                    <h3>SHORTCUTS</h3>
+                </div>
+                <ul class="card-list">
+                    <li><span class="list-marker">›</span> <kbd>Ctrl</kbd> + <kbd>Enter</kbd> Execute</li>
+                    <li><span class="list-marker">›</span> <kbd>Tab</kbd> Indent</li>
+                    <li><span class="list-marker">›</span> <kbd>Ctrl</kbd> + <kbd>/</kbd> Comment</li>
+                </ul>
+            </div>
+
+            <div class="info-card" style="animation-delay: 0.3s">
+                <div class="card-header">
+                    <span class="card-icon">⚡</span>
+                    <h3>PERFORMANCE</h3>
+                </div>
+                <ul class="card-list">
+                    <li><span class="list-marker">›</span> WebAssembly Powered</li>
+                    <li><span class="list-marker">›</span> Near-Native Speed</li>
+                    <li><span class="list-marker">›</span> Zero Backend Required</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Mobile toggle button -->
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle panels">
+            <span class="toggle-icon"></span>
+        </button>
+
+        <!-- Creator Footer -->
+        <footer class="creator-footer">
+            <div class="creator-content">
+                <div class="creator-badge">
+                    <span class="badge-icon">⚡</span>
+                    <span class="badge-text">CREATED BY</span>
+                </div>
+                <div class="creator-info">
+                    <h3 class="creator-name">Yuval Avidani</h3>
+                    <p class="creator-title">AI Builder & Speaker | Founder of YUV.AI</p>
+                    <div class="creator-badges-row">
+                        <span class="mini-badge">🌟 GitHub Star</span>
+                        <span class="mini-badge">☁️ AWS Gen AI Superstar</span>
+                    </div>
+                </div>
+                <div class="social-links">
+                    <a href="https://yuv.ai" target="_blank" rel="noopener" class="social-btn" title="Homepage">
+                        <span class="social-icon">🌐</span>
+                        <span class="social-label">Homepage</span>
+                    </a>
+                    <a href="https://www.linkedin.com/in/%F0%9F%8E%97%EF%B8%8Fyuval-avidani-87081474/" target="_blank" rel="noopener" class="social-btn" title="LinkedIn">
+                        <span class="social-icon">💼</span>
+                        <span class="social-label">LinkedIn</span>
+                    </a>
+                    <a href="https://twitter.com/yuvalav" target="_blank" rel="noopener" class="social-btn" title="X/Twitter">
+                        <span class="social-icon">𝕏</span>
+                        <span class="social-label">@yuvalav</span>
+                    </a>
+                    <a href="https://instagram.com/yuval_770" target="_blank" rel="noopener" class="social-btn" title="Instagram">
+                        <span class="social-icon">📸</span>
+                        <span class="social-label">@yuval_770</span>
+                    </a>
+                    <a href="https://linktr.ee/yuvai" target="_blank" rel="noopener" class="social-btn" title="Linktree">
+                        <span class="social-icon">🔗</span>
+                        <span class="social-label">More Links</span>
+                    </a>
+                </div>
+                <div class="creator-cta">
+                    <p class="cta-text">Want to build amazing AI projects? Let's connect!</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
